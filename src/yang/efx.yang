@@ -1,0 +1,79 @@
+module efx {
+  namespace "http://com/example/efx";
+  prefix efx;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  
+
+  augment /ncs:services {
+
+    list efx {
+      tailf:info "provide l2 vlan services";
+      key name;
+      unique "reserved-vlan-id";
+
+      uses ncs:service-data;
+      ncs:servicepoint "efx";
+
+      leaf name {
+        tailf:info "name of unique virtual switch";
+        type string;
+      }
+
+      leaf-list vlan-id {
+        tailf:info "provide vlan id for this service";
+        type uint32 {
+          range "2..4095";
+        }
+        min-elements 1;
+      }
+
+      leaf reserved-vlan-id {
+        tailf:info "reserved vlan id for this service";
+        type uint32 {
+          range "2..100";
+        }
+        mandatory true;
+      }
+
+      list devices {
+        tailf:info "provide port-aggr on this device";
+        key device;
+
+        leaf device {
+          type leafref {
+            path "/ncs:devices/ncs:device/ncs:name";
+          }
+          mandatory true;
+        }
+
+        list port-aggr {
+          tailf:info "provide port aggr on this device";
+          key name;
+
+          leaf name {
+            tailf:info "unique name of this port-aggr";
+            type string;
+          }
+
+          leaf-list port-list {
+            tailf:info "provide list of ports for this aggr";
+            type uint16 {
+              range "1..255";
+            }
+            min-elements 1;
+            max-elements 8;
+          }
+        } 
+      }
+    }
+  }
+}

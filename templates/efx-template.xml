@@ -1,0 +1,61 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="efx">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+  <device>
+    <name>{devices/device}</name>
+      <config>
+      <aggregation xmlns="http://tail-f.com/ned/cienacli-acos">
+        <create>
+          <agg>
+            <name>{port-aggr/name}</name>
+          </agg>
+        </create>
+         <add>
+          <agg>
+            <id>{port-aggr/name}</id>
+            <port>
+              <id>{port-list}</id>
+            </port>
+          </agg>
+        </add>
+      </aggregation>
+      <virtual-switch xmlns="http://tail-f.com/ned/cienacli-acos">
+        <add>
+          <reserved-vlan>
+            <id>{/reserved-vlan-id}</id>
+          </reserved-vlan>
+        </add>
+        <ethernet>
+          <create>
+            <vs>
+              <name>{string(../name)}</name>
+              <vc>{string(../name)}</vc>
+              <reserved-vlan>{../reserved-vlan-id}</reserved-vlan>
+            </vs>
+            </create>
+          <add>
+            <vs>
+              <id>{string(../name)}</id>
+              <port>
+                <id>{port-aggr/name}</id>
+                <vlan>
+                  <id>{/vlan-id}</id>
+                </vlan>
+              </port>
+            </vs>
+          </add>
+        </ethernet>
+      </virtual-switch>
+       <port xmlns="http://tail-f.com/ned/cienacli-acos">
+        <set>
+          <port>
+            <name>{port-aggr/name}</name>
+            <acceptable-frame-type>tagged-only</acceptable-frame-type>
+          </port>
+        </set>
+      </port>
+
+      </config>
+  </device>
+  </devices>
+</config-template>
